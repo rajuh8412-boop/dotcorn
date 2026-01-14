@@ -1,2 +1,0 @@
-# dotcorn
-Videos for clients 
