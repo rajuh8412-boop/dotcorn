@@ -17,13 +17,13 @@ const categoryConfig = {
 // --- REAL DATA ---
 const realData = {
     'BFDC101': { 
-        src: 'https://youtube.com/shorts/xv2Ervi4TB4?feature=share', 
+        src: 'https://www.youtube.com/shorts/xv2Ervi4TB4', 
         thumb: 'https://img.youtube.com/vi/xv2Ervi4TB4/maxresdefault.jpg', 
         title: 'Bestie Forever', 
         price: 99 
     },
     'BFDC102': {
-        src: 'https://youtu.be/SYUEkfhEVUI?si=v61_Xbl339Jcr0r-',
+        src: 'https://youtu.be/SYUEkfhEVUI?si=l8JCI-yIAfvj-D8y',
         thumb: 'media/thumb.png',
         title: 'Local File Video',
         price: 199
@@ -56,13 +56,48 @@ function getYouTubeID(url) {
     return (match && match[2].length === 11) ? match[2] : null;
 }
 
-// --- HELPER: FORMAT TIME (MM:SS) ---
+// --- HELPER: FORMAT TIME ---
 function formatTime(seconds) {
     if (!seconds) return "00:00";
     let mins = Math.floor(seconds / 60);
     let secs = Math.floor(seconds % 60);
     if (secs < 10) secs = "0" + secs;
     return `${mins}:${secs}`;
+}
+
+// --- NEW FUNCTION: STOP ALL OTHER VIDEOS ---
+function stopAllOthers(currentId) {
+    // 1. Pause all MP4 Videos
+    document.querySelectorAll('video').forEach(vid => {
+        // Get the ID of this video's wrapper
+        const wrapper = vid.closest('.video-wrapper');
+        const vidId = wrapper ? wrapper.id.replace('wrap-', '') : null;
+        
+        if (vidId && vidId !== currentId) {
+            vid.pause();
+            const btn = document.querySelector(`#btn-${vidId} i`);
+            if(btn) btn.className = 'fas fa-play';
+        }
+    });
+
+    // 2. Pause all YouTube Videos
+    document.querySelectorAll('.youtube-iframe').forEach(iframe => {
+        const iframeId = iframe.id.replace('iframe-', '');
+        if (iframeId !== currentId) {
+            // Send Pause Command
+            iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+            
+            // Reset to "Covered" State (Show Thumbnail)
+            const thumb = document.getElementById(`thumb-${iframeId}`);
+            const btn = document.querySelector(`#btn-${iframeId} i`);
+            
+            if(thumb) thumb.style.display = 'block';
+            if(btn) btn.className = 'fas fa-play';
+            
+            // Stop the yellow bar
+            stopFakeProgress(iframeId);
+        }
+    });
 }
 
 // --- 2. HTML GENERATOR ---
@@ -80,15 +115,12 @@ function getCardHTML(video) {
 
              <div class="custom-controls" style="opacity:0;" id="ctrl-${video.id}">
                 <button class="control-btn" onclick="toggleHybridPlay('${video.id}', '${ytID}')" id="btn-${video.id}"><i class="fas fa-play"></i></button>
-                
                 <div class="seek-bar" style="background:rgba(255,255,255,0.3); height:4px; border-radius:2px; flex-grow:1; position:relative; margin:0 10px;">
                     <div id="prog-${video.id}" style="width:0%; height:100%; background:#FFD700; border-radius:2px;"></div>
                 </div>
-
                 <button class="control-btn" onclick="toggleHybridMute('${video.id}')"><i class="fas fa-volume-up"></i></button>
                 <button class="control-btn" onclick="toggleFullScreen('${video.id}', this)"><i class="fas fa-expand"></i></button>
              </div>
-             
              </div>`;
     } else if (video.src) {
         // --- MP4 PLAYER ---
@@ -98,7 +130,6 @@ function getCardHTML(video) {
              
              <div class="custom-controls" onclick="event.stopPropagation()">
                 <button class="control-btn" onclick="togglePlay('${video.id}')" id="btn-${video.id}"><i class="fas fa-play"></i></button>
-                
                 <button class="control-btn" style="font-size:0.8rem;" onclick="skipTime('${video.id}', -10)">-10s</button>
                 
                 <input type="range" class="seek-bar" value="0" min="0" max="100" 
@@ -108,9 +139,7 @@ function getCardHTML(video) {
                     id="range-${video.id}">
 
                 <span class="time-display" id="time-${video.id}">00:00 / 00:00</span>
-                
                 <button class="control-btn" style="font-size:0.8rem;" onclick="skipTime('${video.id}', 10)">+10s</button>
-                
                 <button class="control-btn" onclick="toggleMute('${video.id}', this)"><i class="fas fa-volume-up"></i></button>
                 <button class="control-btn" onclick="toggleFullScreen('${video.id}', this)"><i class="fas fa-expand"></i></button>
              </div>
@@ -139,7 +168,16 @@ function stopDragging(id, range) { isDragging = false; scrubVideo(id, range); }
 function togglePlay(id) {
     const video = document.querySelector(`#wrap-${id} video`);
     const btn = document.querySelector(`#btn-${id} i`);
-    if(video.paused) { video.play(); btn.className='fas fa-pause'; } else { video.pause(); btn.className='fas fa-play'; }
+    
+    // STOP OTHERS BEFORE PLAYING
+    if(video.paused) { 
+        stopAllOthers(id); // <--- NEW ADDITION
+        video.play(); 
+        btn.className='fas fa-pause'; 
+    } else { 
+        video.pause(); 
+        btn.className='fas fa-play'; 
+    }
 }
 
 function initTime(id) {
@@ -202,7 +240,16 @@ function toggleHybridPlay(id, ytID) {
     const smallBtn = document.querySelector(`#btn-${id} i`);
     const controls = document.getElementById(`ctrl-${id}`);
 
-    if (frameBox.innerHTML === "") {
+    // STOP OTHERS BEFORE PLAYING
+    // Check if we are about to play (either first load OR currently paused)
+    const isFirstLoad = (frameBox.innerHTML === "");
+    const isPaused = (thumb.style.display !== 'none');
+    
+    if (isFirstLoad || isPaused) {
+        stopAllOthers(id); // <--- NEW ADDITION
+    }
+
+    if (isFirstLoad) {
         thumb.style.display = 'none';
         frameBox.style.display = 'block';
         controls.style.opacity = '1';
