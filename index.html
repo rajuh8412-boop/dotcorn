@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dot Corn | Premium Video Templates</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    <nav>
+        <div class="logo">Dot Corn</div>
+        <ul class="nav-links">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#contact">Contact</a></li>
+            <li><a href="#" class="login-btn">Login</a></li>
+        </ul>
+        <div class="hamburger" onclick="toggleMenu()"><i class="fas fa-bars"></i></div>
+    </nav>
+
+    <header id="home" class="hero">
+        <div class="hero-content">
+            <h1>Memories Made <span>Cinematic</span></h1>
+            <p>Premium Cinematic Video Edits</p>
+        </div>
+    </header>
+
+    <section id="search-results-section" class="container" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+            <h2 class="section-title">Search Results</h2>
+            <button onclick="closeSearch()" style="border:1px solid #FFD700; color:#FFD700; background:transparent; padding:8px 20px; cursor:pointer;">Close</button>
+        </div>
+        <div class="grid" id="search-grid"></div>
+    </section>
+
+    <section class="cat-nav-section">
+        <div class="cat-grid">
+            <a href="#birthday" class="cat-box"><i class="fas fa-birthday-cake"></i><span>Birthday</span></a>
+            <a href="#wedding" class="cat-box"><i class="fas fa-ring"></i><span>Wedding</span></a>
+            <a href="#anniversary" class="cat-box"><i class="fas fa-heart"></i><span>Anniversary</span></a>
+            <a href="#festival" class="cat-box"><i class="fas fa-om"></i><span>Festival</span></a>
+            <a href="#other" class="cat-box"><i class="fas fa-shapes"></i><span>Other</span></a>
+        </div>
+    </section>
+
+    <section class="search-section">
+        <div class="search-container">
+            <input type="text" placeholder="Search templates..." class="search-input">
+            <button class="search-btn"><i class="fas fa-search"></i></button>
+        </div>
+    </section>
+
+    <section id="latest" class="container">
+        <h2 class="section-title">Latest Collection</h2>
+        <div class="grid" id="grid-latest"></div>
+        <div class="load-more-container">
+            <button class="btn-load-more" onclick="loadMoreLatest()">Load More Latest</button>
+        </div>
+    </section>
+
+    <section id="birthday" class="container">
+        <h2 class="section-title">Birthday Collection</h2>
+
+        <div class="birthday-banner">
+            <a href="#birthday_friend" class="b-nav-item"><i class="fas fa-user-friends"></i><span>Friends</span></a>
+            <a href="#birthday_couples" class="b-nav-item"><i class="fas fa-heart"></i><span>Couples</span></a>
+            <a href="#birthday_kids" class="b-nav-item"><i class="fas fa-baby"></i><span>Kids</span></a>
+            <a href="#birthday_parents" class="b-nav-item"><i class="fas fa-user-tie"></i><span>Parents</span></a>
+            <a href="#birthday_other" class="b-nav-item"><i class="fas fa-gift"></i><span>Other</span></a>
+        </div>
+
+        <div id="birthday_friend" class="sub-category">
+            <h3 class="sub-title">For Friends</h3>
+            <div id="filters-birthday_friend" class="filter-container"></div> 
+            <div class="grid" id="grid-birthday_friend"></div>
+            <div class="load-more-container"><button class="btn-load-more" onclick="loadMoreCategory('birthday_friend')">Load More Friends</button></div>
+        </div>
+
+        <div id="birthday_couples" class="sub-category">
+            <h3 class="sub-title">For Couples</h3>
+            <div id="filters-birthday_couples" class="filter-container"></div> 
+            <div class="grid" id="grid-birthday_couples"></div>
+            <div class="load-more-container"><button class="btn-load-more" onclick="loadMoreCategory('birthday_couples')">Load More Couples</button></div>
+        </div>
+
+        <div id="birthday_kids" class="sub-category">
+            <h3 class="sub-title">For Kids</h3>
+            <div id="filters-birthday_kids" class="filter-container"></div> 
+            <div class="grid" id="grid-birthday_kids"></div>
+            <div class="load-more-container"><button class="btn-load-more" onclick="loadMoreCategory('birthday_kids')">Load More Kids</button></div>
+        </div>
+
+        <div id="birthday_parents" class="sub-category">
+            <h3 class="sub-title">For Parents</h3>
+            <div id="filters-birthday_parents" class="filter-container"></div> 
+            <div class="grid" id="grid-birthday_parents"></div>
+            <div class="load-more-container"><button class="btn-load-more" onclick="loadMoreCategory('birthday_parents')">Load More Parents</button></div>
+        </div>
+
+        <div id="birthday_other" class="sub-category">
+            <h3 class="sub-title">Other Birthday</h3>
+            <div id="filters-birthday_other" class="filter-container"></div> 
+            <div class="grid" id="grid-birthday_other"></div>
+            <div class="load-more-container"><button class="btn-load-more" onclick="loadMoreCategory('birthday_other')">Load More Birthday</button></div>
+        </div>
+    </section>
+
+    <section id="anniversary" class="container">
+        <h2 class="section-title">Anniversary</h2>
+        <div id="filters-anniversary" class="filter-container"></div>
+        <div class="grid" id="grid-anniversary"></div>
+        <div class="load-more-container"><button class="btn-load-more" onclick="loadMoreCategory('anniversary')">Load More Anniversary</button></div>
+    </section>
+
+    <section id="wedding" class="container">
+        <h2 class="section-title">Wedding</h2>
+        <div id="filters-wedding" class="filter-container"></div>
+        <div class="grid" id="grid-wedding"></div>
+        <div class="load-more-container"><button class="btn-load-more" onclick="loadMoreCategory('wedding')">Load More Wedding</button></div>
+    </section>
+
+    <section id="festival" class="container">
+        <h2 class="section-title">Festival</h2>
+        <div id="filters-festival" class="filter-container"></div>
+        <div class="grid" id="grid-festival"></div>
+        <div class="load-more-container"><button class="btn-load-more" onclick="loadMoreCategory('festival')">Load More Festival</button></div>
+    </section>
+
+    <section id="other" class="container">
+        <h2 class="section-title">Other Occasions</h2>
+        <div id="filters-main_other" class="filter-container"></div>
+        <div class="grid" id="grid-main_other"></div>
+        <div class="load-more-container"><button class="btn-load-more" onclick="loadMoreCategory('main_other')">Load More Other</button></div>
+    </section>
+
+    <footer id="contact">
+        <div class="footer-container">
+            <div class="footer-logo">Dot Corn</div>
+            <p class="copyright">&copy; 2026 Dot Corn Productions</p>
+            <div class="contact-list">
+                <a href="https://wa.me/919380686625" target="_blank" class="contact-item"><i class="fab fa-whatsapp"></i><span>+91 93806 86625</span></a>
+                <a href="mailto:dotcorn@gmail.com" class="contact-item"><i class="fas fa-envelope"></i><span>dotcorn@gmail.com</span></a>
+                <a href="https://instagram.com/DotCorn" target="_blank" class="contact-item"><i class="fab fa-instagram"></i><span>DotCorn</span></a>
+            </div>
+        </div>
+    </footer>
+
+    <a href="javascript:void(0)" onclick="contactSupport()" class="floating-whatsapp"><i class="fab fa-whatsapp"></i></a>
+
+    <script src="script.js"></script>
+</body>
+</html>
